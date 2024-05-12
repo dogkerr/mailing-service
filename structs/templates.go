@@ -8,11 +8,11 @@ const (
 )
 
 type BillingNoticeData struct {
-	Name    string `json:"name"`
-	Balance string `json:"balance"`
+	Username string `json:"username"`
+	Balance  string `json:"balance"`
 }
 
 type VerificationData struct {
-	Name             string `json:"name"`
+	Username         string `json:"username"`
 	VerificationLink string `json:"verificationLink"`
 }

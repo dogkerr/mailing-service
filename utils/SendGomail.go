@@ -55,5 +55,5 @@ func SendGomail(templateType structs.TemplateType, data structs.Data, subject st
 		return
 	}
 
-	fmt.Printf("%s email successfully sent to %v", templateType, to)
+	fmt.Printf("%s email successfully sent to %v\n", templateType, to)
 }
