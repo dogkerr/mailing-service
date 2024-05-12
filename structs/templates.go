@@ -8,11 +8,11 @@ const (
 )
 
 type BillingNoticeData struct {
-	Name       string
-	ExpiryDate string
+	Name    string `json:"name"`
+	Balance string `json:"balance"`
 }
 
 type VerificationData struct {
-	Name             string
-	VerificationLink string
+	Name             string `json:"name"`
+	VerificationLink string `json:"verificationLink"`
 }

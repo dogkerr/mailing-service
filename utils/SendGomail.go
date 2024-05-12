@@ -10,26 +10,40 @@ import (
 )
 
 var templatePaths = map[string]string{
-	"verification":   "./../templates/verification.html",
-	"billing-notice": "./../templates/billing-notice.html",
+	"verification":   "templates/verification.html",
+	"billing-notice": "templates/billing-notice.html",
 }
 
-func SendGomail(templateType structs.TemplateType, data structs.VerificationData, to string, subject string) {
-	fmt.Println(data.Name)
+func SendGomail(templateType structs.TemplateType, data structs.Data, subject string, to ...string) {
+	// Get data
+	var validData interface{}
+
+	if data.VerificationData != nil && templateType == structs.Verification {
+		validData = data.VerificationData
+	} else if data.BillingNoticeData != nil && templateType == structs.BillingNotice {
+		validData = data.BillingNoticeData
+	} else {
+		fmt.Println("Invalid data or template type")
+		return
+	}
 
 	// Get html
 	var body bytes.Buffer
 	t, err := template.ParseFiles(templatePaths[string(templateType)])
-	t.Execute(&body, data)
-
 	if err != nil {
+		fmt.Println("Error parsing template:", err)
+		return
+	}
+
+	if err = t.Execute(&body, validData); err != nil {
+		fmt.Println("Error executing template:", err)
 		return
 	}
 
 	// Send mail with gomail
 	m := gomail.NewMessage()
 	m.SetHeader("From", "davidlou0810@gmail.com")
-	m.SetHeader("To", to)
+	m.SetHeader("To", to...)
 	m.SetHeader("Subject", subject)
 	m.SetBody("text/html", body.String())
 
@@ -37,6 +51,9 @@ func SendGomail(templateType structs.TemplateType, data structs.VerificationData
 
 	// Send the email to Bob, Cora and Dan.
 	if err := d.DialAndSend(m); err != nil {
-		panic(err)
+		fmt.Println("Error sending email:", err)
+		return
 	}
+
+	fmt.Printf("%s email successfully sent to %v", templateType, to)
 }

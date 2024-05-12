@@ -1,12 +1,15 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 
+	"github.com/dogkerr/mailing-service/m/v2/structs"
+	"github.com/dogkerr/mailing-service/m/v2/utils"
 	"github.com/streadway/amqp"
 )
 
-func Rabbit() {
+func main() {
 	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
 	if err != nil {
 		fmt.Println(err)
@@ -40,7 +43,15 @@ func Rabbit() {
 	forever := make(chan bool)
 	go func() {
 		for d := range msgs {
-			fmt.Println("Received message: ", string(d.Body))
+			var body structs.Message
+
+			err := json.Unmarshal(d.Body, &body)
+			if err != nil {
+				fmt.Println("Error while reading JSON body")
+				continue
+			}
+
+			utils.SendGomail(structs.TemplateType(body.TemplateType), body.Data, body.Subject, body.To...)
 		}
 	}()
 
