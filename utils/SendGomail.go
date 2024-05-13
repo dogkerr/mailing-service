@@ -19,8 +19,16 @@ func SendGomail(templateType structs.TemplateType, data structs.Data, subject st
 	var validData interface{}
 
 	if data.VerificationData != nil && templateType == structs.Verification {
+		if err := data.VerificationData.Validate(); err != nil {
+			fmt.Println("Error validating data:", err)
+			return
+		}
 		validData = data.VerificationData
 	} else if data.BillingNoticeData != nil && templateType == structs.BillingNotice {
+		if err := data.BillingNoticeData.Validate(); err != nil {
+			fmt.Println("Error validating data:", err)
+			return
+		}
 		validData = data.BillingNoticeData
 	} else {
 		fmt.Println("Invalid data or template type")

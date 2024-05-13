@@ -17,8 +17,6 @@ func main() {
 	}
 	defer conn.Close()
 
-	fmt.Println("successfully connected to rabbitmq")
-
 	ch, err := conn.Channel()
 	if err != nil {
 		fmt.Println(err)
@@ -43,11 +41,20 @@ func main() {
 	forever := make(chan bool)
 	go func() {
 		for d := range msgs {
+			fmt.Println("=====================================")
+			fmt.Println("Received a message: ", string(d.Body))
+			fmt.Println("=====================================")
+
 			var body structs.Message
 
 			err := json.Unmarshal(d.Body, &body)
 			if err != nil {
-				fmt.Println("Error while reading JSON body")
+				fmt.Println("Error while reading JSON body:", err)
+				continue
+			}
+
+			if err := body.Validate(); err != nil {
+				fmt.Println("Error validating message:", err)
 				continue
 			}
 
@@ -56,6 +63,6 @@ func main() {
 	}()
 
 	fmt.Println("Successfully connected to RabbitMQ")
-	fmt.Println("waiting for messages")
+	fmt.Println("Waiting for messages...")
 	<-forever
 }

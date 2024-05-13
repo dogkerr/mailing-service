@@ -8,11 +8,19 @@ const (
 )
 
 type BillingNoticeData struct {
-	Username string `json:"username"`
-	Balance  string `json:"balance"`
+	Username string  `json:"username" validate:"required"`
+	Balance  float32 `json:"balance" validate:"gt=0"`
 }
 
 type VerificationData struct {
-	Username         string `json:"username"`
-	VerificationLink string `json:"verificationLink"`
+	Name             string `json:"name" validate:"required"`
+	VerificationLink string `json:"verificationLink" validate:"required,url"`
+}
+
+func (d *BillingNoticeData) Validate() error {
+	return Validator.Struct(d)
+}
+
+func (d *VerificationData) Validate() error {
+	return Validator.Struct(d)
 }
