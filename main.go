@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 
 	"github.com/dogkerr/mailing-service/m/v2/structs"
 	"github.com/dogkerr/mailing-service/m/v2/utils"
@@ -10,7 +11,14 @@ import (
 )
 
 func main() {
-	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	// Get the RabbitMQ URL from the environment variable
+	rabbitMQURL := os.Getenv("RABBITMQ_URL")
+	if rabbitMQURL == "" {
+		// Set a default URL if the environment variable is not set
+		rabbitMQURL = "amqp://guest:guest@localhost:5672/"
+	}
+
+	conn, err := amqp.Dial(rabbitMQURL)
 	if err != nil {
 		fmt.Println(err)
 		panic(err)
