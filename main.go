@@ -13,6 +13,7 @@ import (
 func main() {
 	// Get the RabbitMQ URL from the environment variable
 	rabbitMQURL := os.Getenv("RABBITMQ_URL")
+	fmt.Println("RABBITMQ_URL:", rabbitMQURL)
 	if rabbitMQURL == "" {
 		// Set a default URL if the environment variable is not set
 		rabbitMQURL = "amqp://guest:guest@localhost:5672/"
@@ -32,10 +33,24 @@ func main() {
 	}
 	defer ch.Close()
 
+	// Declare the queue if not exists
+	_, err = ch.QueueDeclare(
+		"MailQueue",
+		false,
+		false,
+		false,
+		false,
+		nil,
+	)
+	if err != nil {
+		fmt.Println(err)
+		panic(err)
+	}
+
 	msgs, err := ch.Consume(
 		"MailQueue",
 		"",
-		true,
+		false,
 		false,
 		false,
 		false,
@@ -57,16 +72,25 @@ func main() {
 
 			err := json.Unmarshal(d.Body, &body)
 			if err != nil {
+				d.Nack(false, false)
 				fmt.Println("Error while reading JSON body:", err)
 				continue
 			}
 
 			if err := body.Validate(); err != nil {
+				d.Nack(false, false)
 				fmt.Println("Error validating message:", err)
 				continue
 			}
 
-			utils.SendGomail(structs.TemplateType(body.TemplateType), body.Data, body.Subject, body.To...)
+			err = utils.SendGomail(structs.TemplateType(body.TemplateType), body.Data, body.Subject, body.To...)
+			if err != nil {
+				d.Nack(false, false)
+				fmt.Println("Error sending mail:", err)
+				continue
+			}
+
+			d.Ack(false)
 		}
 	}()
 

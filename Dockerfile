@@ -1,29 +1,20 @@
-# Use the official Golang image as the base image
-FROM golang:1.22-alpine
-
-# Set the working directory inside the container
-WORKDIR /app
-
-ENV RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
-
-# Copy the Go module files
-COPY go.mod go.sum ./
-
-# Download and cache the module dependencies
+# Step 1: Modules caching
+FROM golang:1.22.2-alpine as modules
+COPY go.mod go.sum /modules/
+WORKDIR /modules
 RUN go mod download
 
-# Copy the entire project
-COPY . .
+# Step 2: Builder
+FROM golang:1.22.2-alpine as builder
+COPY --from=modules /go/pkg /go/pkg
+COPY . /app
+WORKDIR /app
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+  go build -o /bin/app .
 
-# Build the Go application
-RUN go build -o main .
-
-RUN ls -l
-
-RUN go run main.go
-
-# Expose the port your application listens on (if applicable)
-# EXPOSE 8080
-
-# # Set the entrypoint to run the compiled binary
-# ENTRYPOINT ["./main"]
+# Step 3: Final
+FROM scratch
+# COPY --from=builder /app/.env .
+COPY --from=builder /bin/app /bin/app
+ENV RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
+CMD ["/bin/app"]
