@@ -14,7 +14,7 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
 
 # Step 3: Final
 FROM scratch
-# COPY --from=builder /app/.env .
+COPY --from=builder /app/.env .
 COPY --from=builder /bin/app /bin/app
 ENV RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
 CMD ["/bin/app"]

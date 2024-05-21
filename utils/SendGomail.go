@@ -51,12 +51,12 @@ func SendGomail(templateType structs.TemplateType, data structs.Data, subject st
 
 	// Send mail with gomail
 	m := gomail.NewMessage()
-	m.SetHeader("From", "davidlou0810@gmail.com")
+	m.SetHeader("From", "dogker.dog@gmail.com")
 	m.SetHeader("To", to...)
 	m.SetHeader("Subject", subject)
 	m.SetBody("text/html", body.String())
 
-	d := gomail.NewDialer("smtp.gmail.com", 587, "davidlou0810@gmail.com", "bjjsivudkhxblbgh")
+	d := gomail.NewDialer("smtp.gmail.com", 587, "dogker.dog@gmail.com", "kquwwmxnyfnuvqjd")
 
 	// Send the email to Bob, Cora and Dan.
 	if err := d.DialAndSend(m); err != nil {
