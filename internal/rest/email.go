@@ -1,4 +1,4 @@
-package router
+package rest
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/app/server"
-	"github.com/dogkerr/mailing-service/m/v2/biz/domain"
+	"github.com/dogkerr/mailing-service/m/v2/domain"
 )
 
 type EmailService interface {

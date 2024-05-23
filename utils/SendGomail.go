@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"text/template"
 
-	"github.com/dogkerr/mailing-service/m/v2/structs"
+	"github.com/dogkerr/mailing-service/m/v2/domain"
 	"gopkg.in/gomail.v2"
 )
 
@@ -15,17 +15,17 @@ var templatePaths = map[string]string{
 	"billing-notice": "templates/billing-notice.html",
 }
 
-func SendGomail(templateType structs.TemplateType, data structs.Data, subject string, to ...string) error {
+func SendGomail(templateType domain.TemplateType, data domain.Data, subject string, to ...string) error {
 	// Get data
 	var validData interface{}
 
-	if data.VerificationData != nil && templateType == structs.Verification {
+	if data.VerificationData != nil && templateType == domain.Verification {
 		if err := data.VerificationData.Validate(); err != nil {
 			fmt.Println("Error validating data:", err)
 			return err
 		}
 		validData = data.VerificationData
-	} else if data.BillingNoticeData != nil && templateType == structs.BillingNotice {
+	} else if data.BillingNoticeData != nil && templateType == domain.BillingNotice {
 		if err := data.BillingNoticeData.Validate(); err != nil {
 			fmt.Println("Error validating data:", err)
 			return err
@@ -33,7 +33,7 @@ func SendGomail(templateType structs.TemplateType, data structs.Data, subject st
 		validData = data.BillingNoticeData
 	} else {
 		fmt.Println("Invalid data or template type")
-		return errors.New("Invalid data or template type")
+		return errors.New("invalid data or template type")
 	}
 
 	// Get html

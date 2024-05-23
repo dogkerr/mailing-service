@@ -7,8 +7,8 @@ import (
 
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
-	"github.com/dogkerr/mailing-service/m/v2/biz/router"
 	"github.com/dogkerr/mailing-service/m/v2/config"
+	"github.com/dogkerr/mailing-service/m/v2/internal/rest"
 	"github.com/dogkerr/mailing-service/m/v2/pkg"
 	"github.com/hertz-contrib/pprof"
 )
@@ -31,7 +31,7 @@ func main() {
 	)
 	h.Use(pkg.AccessLog())
 	//  harusnya tambahin svc
-	router.EmailRouter(h)
+	rest.EmailRouter(h)
 	pprof.Register(h)
 
 	h.Spin()
