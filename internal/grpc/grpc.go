@@ -11,14 +11,11 @@ import (
 func RunGRPCServer(
 	emailServer pb.EmailServiceServer,
 	listener net.Listener,
-	ch chan *grpc.Server,
 ) error {
 	// GRPC Server
 	grpcServer := grpc.NewServer()
 	pb.RegisterEmailServiceServer(grpcServer, emailServer)
 	reflection.Register(grpcServer)
-
-	ch <- grpcServer
 
 	return grpcServer.Serve(listener)
 }

@@ -22,7 +22,6 @@ func main() {
 	defer logsCores.Sync()
 	hlog.SetLogger(logsCores)
 
-	// validation error custom
 	customValidationErr := pkg.CreateCustomValidationError()
 	h := server.Default(
 		server.WithHostPorts("0.0.0.0:9898"),
@@ -30,7 +29,7 @@ func main() {
 		server.WithExitWaitTime(4*time.Second),
 	)
 	h.Use(pkg.AccessLog())
-	//  harusnya tambahin svc
+
 	rest.EmailRouter(h)
 	pprof.Register(h)
 

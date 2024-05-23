@@ -8,12 +8,20 @@ const (
 )
 
 type BillingNoticeData struct {
-	Username string  `json:"username" validate:"required"`
-	Balance  float32 `json:"balance" validate:"gt=0"`
+	Name                 string  `json:"name" validate:"required"`
+	Email                string  `json:"email" validate:"required,email"`
+	ContainerID          string  `json:"container_id"`
+	TotalCPUUsage        float32 `json:"total_cpu_usage"`
+	TotalMemoryUsage     float32 `json:"total_memory_usage"`
+	TotalNetIngressUsage float32 `json:"total_net_ingress_usage"`
+	TotalNetEgressUsage  float32 `json:"total_net_egress_usage"`
+	Timestamp            string  `json:"timestamp"`
+	TotalCost            float32 `json:"total_cost"`
 }
 
 type VerificationData struct {
 	Name             string `json:"name" validate:"required"`
+	Email            string `json:"email" validate:"required,email"`
 	VerificationLink string `json:"verificationLink" validate:"required,url"`
 }
 

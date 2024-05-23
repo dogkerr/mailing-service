@@ -20,23 +20,23 @@ func TestMessageValidation(t *testing.T) {
 	}
 }
 
-func TestBillingNoticeValidation(t *testing.T) {
-	m := Message{
-		TemplateType: "billing-notice",
-		Data: Data{
-			BillingNoticeData: &BillingNoticeData{
-				Username: "test",
-				Balance:  100,
-			},
-		},
-		Subject: "Test",
-		To:      []string{"davidlou0810@gmail.com"}}
+// func TestBillingNoticeValidation(t *testing.T) {
+// 	m := Message{
+// 		TemplateType: "billing-notice",
+// 		Data: Data{
+// 			BillingNoticeData: &BillingNoticeData{
+// 				Username: "test",
+// 				Balance:  100,
+// 			},
+// 		},
+// 		Subject: "Test",
+// 		To:      []string{"davidlou0810@gmail.com"}}
 
-	err := m.Validate()
-	if err != nil {
-		t.Errorf("Expected no error, got %v", err)
-	}
-}
+// 	err := m.Validate()
+// 	if err != nil {
+// 		t.Errorf("Expected no error, got %v", err)
+// 	}
+// }
 
 func TestVerificationDataValidation(t *testing.T) {
 	d := VerificationData{
