@@ -25,6 +25,13 @@ type VerificationData struct {
 	VerificationLink string `json:"verificationLink" validate:"required,url"`
 }
 
+type ContainerDownNoticeData struct {
+	Name             string `json:"name" validate:"required"`
+	Email            string `json:"email" validate:"required,email"`
+	SwarmServiceName string `json:"swarm_service_name"`
+	SwarmServiceID   string `json:"swarm_service_id"`
+}
+
 func (d *BillingNoticeData) Validate() error {
 	return Validator.Struct(d)
 }

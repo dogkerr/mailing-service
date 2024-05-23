@@ -8,6 +8,8 @@ import (
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/dogkerr/mailing-service/m/v2/domain"
+	"github.com/dogkerr/mailing-service/m/v2/internal/repository"
+	"github.com/dogkerr/mailing-service/m/v2/service/helpers"
 )
 
 type EmailService interface {
@@ -61,7 +63,26 @@ func (h *EmailHandler) SendDownEmail(ctx context.Context, c *app.RequestContext)
 	fmt.Println(req.CommonLabels.ContainerLabelUserID)
 	fmt.Println(req.CommonLabels.ContainerDockerSwarmServiceName)
 	fmt.Println(req.CommonLabels.ContainerSwarmServiceID)
-	// TODO:  service buat kirim email...
+
+	// Handle send email
+	user, err := repository.NewService().GetUserById(req.CommonLabels.ContainerLabelUserID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, ResponseError{Message: err.Error()})
+		return
+	}
+
+	templateData := domain.ContainerDownNoticeData{
+		Name:             user.GetFullname(),
+		Email:            user.GetEmail(),
+		SwarmServiceName: req.CommonLabels.ContainerDockerSwarmServiceName,
+		SwarmServiceID:   req.CommonLabels.ContainerSwarmServiceID,
+	}
+
+	err = helpers.ParseAndSend("templates/service-down-notice.html", templateData, user.GetEmail(), "Swarm Service Down Notice")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, ResponseError{Message: err.Error()})
+		return
+	}
 
 	c.JSON(http.StatusOK, promeWebhookRes{Message: "ok"})
 }
