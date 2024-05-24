@@ -38,7 +38,7 @@ func main() {
 	grpcServer := grpc.NewServer()
 	pb.RegisterEmailServiceServer(grpcServer, emailServer)
 
-	address := fmt.Sprintf("localhost:%s", grpcPort)
+	address := fmt.Sprintf("0.0.0.0:%s", grpcPort)
 	listener, err := net.Listen("tcp", address)
 	if err != nil {
 		log.Fatalf("cannot start server: %v", err)
@@ -53,7 +53,7 @@ func main() {
 	}()
 
 	// HTTP Server
-	httpAddress := fmt.Sprintf("localhost:%s", httpPort)
+	httpAddress := fmt.Sprintf("0.0.0.0:%s", httpPort)
 	customValidationErr := pkg.CreateCustomValidationError()
 	h := server.Default(
 		server.WithHostPorts(httpAddress),
