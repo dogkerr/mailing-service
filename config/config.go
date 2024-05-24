@@ -14,7 +14,6 @@ type (
 		App
 		HTTP
 		LogConfig
-		RabbitMQ
 	}
 
 	// App -.
@@ -29,15 +28,9 @@ type (
 	}
 
 	LogConfig struct {
-		Level string `json:"level" yaml:"level" env:"LOG_LEVEL"`
-		// Filename   string `json:"filename" yaml:"filename"`
-		// MaxSize    int    `json:"maxsize" yaml:"maxsize"`
-		MaxAge     int `json:"max_age" yaml:"max_age" env:"LOG_MAXAGE"`
-		MaxBackups int `json:"max_backups" yaml:"max_backups" env:"LOG_MAXBACKUP"`
-	}
-
-	RabbitMQ struct {
-		RMQAddress string `json:"rabbitmqAddress" yaml:"rmqAddress" env:"RABBITMQ_ADDRESS"`
+		Level      string `json:"level" yaml:"level" env:"LOG_LEVEL"`
+		MaxAge     int    `json:"max_age" yaml:"max_age" env:"LOG_MAXAGE"`
+		MaxBackups int    `json:"max_backups" yaml:"max_backups" env:"LOG_MAXBACKUP"`
 	}
 )
 
@@ -51,11 +44,12 @@ func NewConfig() (*Config, error) {
 
 	// err = cleanenv.ReadConfig(path+".env", cfg) // buat di doker , ../.env kalo debug (.env kalo docker)
 	// err = cleanenv.ReadConfig(path+"/local.env", cfg) // local run
-	if os.Getenv("APP_ENV") == "local" {
-		err = cleanenv.ReadConfig(path+"/local.env", cfg)
-	} else {
-		err = cleanenv.ReadConfig(path+".env", cfg)
-	}
+	// if os.Getenv("APP_ENV") == "local" {
+	// err = cleanenv.ReadConfig(path+"/local.env", cfg)
+	// }
+	// } else {
+	err = cleanenv.ReadConfig(path+".env", cfg)
+	// }
 	if err != nil {
 		return nil, fmt.Errorf("config error: %w", err)
 	}

@@ -3,14 +3,21 @@
 package main
 
 import (
+	"fmt"
+	"log"
+	"net"
+	"os"
 	"time"
 
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/dogkerr/mailing-service/m/v2/config"
 	"github.com/dogkerr/mailing-service/m/v2/internal/rest"
+	"github.com/dogkerr/mailing-service/m/v2/pb"
 	"github.com/dogkerr/mailing-service/m/v2/pkg"
+	"github.com/dogkerr/mailing-service/m/v2/service"
 	"github.com/hertz-contrib/pprof"
+	"google.golang.org/grpc"
 )
 
 func main() {
@@ -22,9 +29,34 @@ func main() {
 	defer logsCores.Sync()
 	hlog.SetLogger(logsCores)
 
+	// Get env
+	grpcPort := os.Getenv("GRPC_PORT")
+	httpPort := os.Getenv("HTTP_PORT")
+
+	// gRPC Server
+	emailServer := service.NewEmailServer()
+	grpcServer := grpc.NewServer()
+	pb.RegisterEmailServiceServer(grpcServer, emailServer)
+
+	address := fmt.Sprintf("localhost:%s", grpcPort)
+	listener, err := net.Listen("tcp", address)
+	if err != nil {
+		log.Fatalf("cannot start server: %v", err)
+	}
+
+	go func() {
+		log.Printf("start server on port %s", address)
+		err = grpcServer.Serve(listener)
+		if err != nil {
+			log.Fatalf("cannot start server: %v", err)
+		}
+	}()
+
+	// HTTP Server
+	httpAddress := fmt.Sprintf("localhost:%s", httpPort)
 	customValidationErr := pkg.CreateCustomValidationError()
 	h := server.Default(
-		server.WithHostPorts("0.0.0.0:9898"),
+		server.WithHostPorts(httpAddress),
 		server.WithValidateConfig(customValidationErr),
 		server.WithExitWaitTime(4*time.Second),
 	)

@@ -22,7 +22,7 @@ func NewService() *service {
 
 func (s *service) GetUserById(userID string) (*pb.User, error) {
 	//users gRPC Client Setup
-	conn, err := grpc.NewClient("10.66.66.1:4001", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.NewClient("dogker-authentications:4000", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("Failed to dial server: %v", err)
 	}

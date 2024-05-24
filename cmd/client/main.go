@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	serverAddress := flag.String("server", "localhost:8080", "server address")
+	serverAddress := flag.String("server", "localhost:9897", "server address")
 	flag.Parse()
 	log.Printf("start client on server %s", *serverAddress)
 
