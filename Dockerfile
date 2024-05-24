@@ -13,7 +13,7 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
   go build -o /bin/app /app/cmd/app
 
 # Step 3: Final
-FROM scratch
+FROM alpine:3.12
 COPY --from=builder /app/.env .
 COPY --from=builder /bin/app /bin/app
 ENV RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
