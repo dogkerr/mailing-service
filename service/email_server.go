@@ -42,7 +42,7 @@ func (server *EmailServer) SendBillingEmail(ctx context.Context, req *pb.Billing
 		TotalCost:            req.GetTotalCost(),
 	}
 
-	err = helpers.ParseAndSend("templates/billing_notice.html", templateData, user.GetEmail(), "Billing Notice Email")
+	err = helpers.ParseAndSend("templates/billing-notice.html", templateData, user.GetEmail(), "Billing Notice Email")
 	if err != nil {
 		log.Printf("error sending email: %v", err)
 		return nil, status.Error(codes.Internal, "error sending email")
